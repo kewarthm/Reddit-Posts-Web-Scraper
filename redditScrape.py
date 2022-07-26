@@ -9,11 +9,21 @@ options = webdriver.ChromeOptions()
 options.add_experimental_option("excludeSwitches", ["enable-logging"])
 fileDir = os.path.dirname(os.path.realpath('__file__'))
 path = os.path.join(fileDir, "chromedriver.exe")
-site = "https://www.reddit.com/r/manga"
-target = ["Good Morning", "Please Go Home", "Jujutsu Kaisen", "Ganbare", "Dandadan", "RuriDragon", "One Punch Man", "Getting less and less tsun"]
+sample_site = "https://www.reddit.com/r/manga"
+sample_targets = ["Good Morning", "Please Go Home", "Jujutsu Kaisen", "Ganbare", "Dandadan", "RuriDragon", "One Punch Man", "Getting less and less tsun"]
 
 
-def manga_search(site, targets):
+def reddit_search(site, targets):
+    '''
+        (str, [str]) -> [[str, str]]
+        Takes a subreddit name and a list of keywords. Using Selenium and Beautiful soup
+        all recent posts with titles containing a keyword will be returned.
+
+        site: the name of the target subreddit
+        targets: a list of keywords to look for in posts
+        Return: a list of pairs of the form [Post title, link to post]
+
+    '''
     driver = webdriver.Chrome(options=options, executable_path = path)
     driver.get(site)
     driver.implicitly_wait(220)
@@ -44,19 +54,9 @@ def manga_search(site, targets):
     return [res, link_res]
 
 if __name__ == "__main__":
-    r = manga_search(site, target)
+    r = reddit_search(sample_site, sample_targets)
 
     print("--- Results ---")
     for i in range(len(r)):
         print(r[0][i])
         print(r[1][i])
-
-"""
-    TODO:
-        - need Selenium python module to decode dynamic webpage (reddit)
-        - Complete parser -> parse through posts only
-        - Compile results
-        - email results to target email
-        - convert project to module
-        - post to git
-"""
