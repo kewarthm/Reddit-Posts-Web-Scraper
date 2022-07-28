@@ -24,6 +24,13 @@ def reddit_search(subreddit, targets):
             dict[x][y] contains the link to the post
 
     '''
+    if not (type(subreddit) == str):
+        raise TypeError("subreddit must be a string")
+    if not (type(targets) == list):
+        raise TypeError("Keywords must be a list")
+    for k in targets:
+        if not (type(k) == str):
+            raise TypeError("A keyword is not a string")
     results = {}
     for t in targets:
         results[t] = {}
