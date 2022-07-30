@@ -59,6 +59,9 @@ def reddit_search(subreddit, targets):
                 elif p.select_one('[data-click-id="media"]') is not None:
                     results[t][title] = "https://reddit.com" + p.select_one('[data-click-id="body"]')['href']
 
+                elif p.select_one('[data-click-id="background"]') is not None:
+                    results[t][title] = "https://reddit.com" + p.select_one('[data-click-id="body"]')['href']
+
                 else:
                     results[t][title] = p.select_one('[data-testid="outbound-link"]')['href']
 
