@@ -52,18 +52,26 @@ def reddit_search(subreddit, targets):
         title = p.select_one('h3').text
         for t in targets:
             if t.lower() in title.lower():
+                url = ""
                 if p.select_one('figure') is not None:
                     #post has an in-laid image(s), save href to post
-                    results[t][title] = "https://reddit.com" + p.select_one('[data-click-id="body"]')['href']
+                    url = "https://reddit.com" + p.select_one('[data-click-id="body"]')['href']
+                    results[t][url] = {"title": title}
 
                 elif p.select_one('[data-click-id="media"]') is not None:
-                    results[t][title] = "https://reddit.com" + p.select_one('[data-click-id="body"]')['href']
+                    url = "https://reddit.com" + p.select_one('[data-click-id="body"]')['href']
+                    results[t][url] = {"title": title}
 
                 elif p.select_one('[data-click-id="background"]') is not None:
-                    results[t][title] = "https://reddit.com" + p.select_one('[data-click-id="body"]')['href']
+                    url = "https://reddit.com" + p.select_one('[data-click-id="body"]')['href']
+                    results[t][url] = {"title": title}
 
                 else:
-                    results[t][title] = p.select_one('[data-testid="outbound-link"]')['href']
+                    url = p.select_one('[data-testid="outbound-link"]')['href']
+                    results[t][url] = {"title": title}
+
+                results[t][url]["comment_count"] = p.select_one('[data-click-id="comments"] span').text
+                results[t][url]["comments"] = p.select_one('[data-test-id="comments-page-link-num-comments"]')['href']
 
                 break
     return results
@@ -71,10 +79,12 @@ def reddit_search(subreddit, targets):
 if __name__ == "__main__":
     sample_site = "manga"
     sample_targets = ["Good Morning", "Please Go Home", "Jujutsu Kaisen", "Ganbare", "Dandadan", "RuriDragon", "One Punch Man", "Getting more and more"]
-    r = reddit_search(sample_site, sample_targets)
+    r = reddit_search(sample_site, ["news"])
 
     print("--- Results ---")
     for k in r.keys():
         print("-" + k)
         for p in r[k].keys():
-            print("\t" + p + " : " + r[k][p])
+            print("----------")
+            for i in r[k][p].keys():
+                print("\t" + i + " : " + r[k][p][i])
