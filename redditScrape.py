@@ -1,6 +1,7 @@
 import requests
 import os
 import time
+import re
 from html.parser import HTMLParser
 from bs4 import BeautifulSoup
 from selenium import webdriver
@@ -62,7 +63,16 @@ def reddit_search(subreddit, targets):
 
                 results[t][url] = {"title": title}
                 results[t][url]["url"] = url
-                results[t][url]["comment_count"] = p.select_one('[data-click-id="comments"] span').text
+                count = p.select_one('[data-click-id="comments"] span').text
+                c_power = count.split()[0]
+                if 'k' in c_power:
+                    c_power = 3
+                elif 'm' in c_power:
+                    c_power = 6
+                else:
+                    c_power = 0
+                count = re.sub('[^0-9.]', '', count)
+                results[t][url]["comment_count"] = float(count) * (10 ** c_power)
                 results[t][url]["comments"] = p.select_one('[data-test-id="comments-page-link-num-comments"]')['href']
 
                 break
