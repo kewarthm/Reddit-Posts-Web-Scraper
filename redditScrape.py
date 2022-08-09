@@ -18,10 +18,14 @@ def reddit_search(subreddit, targets):
 
         subreddit: the name of the target subreddit
         targets: a list of keywords to look for in posts
-        Return: a 2D dict [x][y] where:
+        Return: a 3D dict [x][y][z] where:
             x is a keyword
-            y is a title of a post found to contain keyword x
-            dict[x][y] contains the link to the post
+            y is a url of a post found to contain keyword x
+            dict[x][y] contains a breakdown of components of a given post:
+                title: the title of the post
+                url: the url of the post
+                comments: the url to the comments section of the post
+                comment_count: the total number of comments
 
     '''
     if not (type(subreddit) == str):
@@ -55,8 +59,9 @@ def reddit_search(subreddit, targets):
                 url = p.select_one('[data-testid="outbound-link"]')['href']
                 if url is None:
                     url = "https://reddit.com" + p.select_one('[data-click-id="body"]')['href']
-                    
+
                 results[t][url] = {"title": title}
+                results[t][url]["url"] = url
                 results[t][url]["comment_count"] = p.select_one('[data-click-id="comments"] span').text
                 results[t][url]["comments"] = p.select_one('[data-test-id="comments-page-link-num-comments"]')['href']
 
