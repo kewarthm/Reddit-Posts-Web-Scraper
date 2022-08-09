@@ -52,24 +52,11 @@ def reddit_search(subreddit, targets):
         title = p.select_one('h3').text
         for t in targets:
             if t.lower() in title.lower():
-                url = ""
-                if p.select_one('figure') is not None:
-                    #post has an in-laid image(s), save href to post
+                url = p.select_one('[data-testid="outbound-link"]')['href']
+                if url is None:
                     url = "https://reddit.com" + p.select_one('[data-click-id="body"]')['href']
-                    results[t][url] = {"title": title}
-
-                elif p.select_one('[data-click-id="media"]') is not None:
-                    url = "https://reddit.com" + p.select_one('[data-click-id="body"]')['href']
-                    results[t][url] = {"title": title}
-
-                elif p.select_one('[data-click-id="background"]') is not None:
-                    url = "https://reddit.com" + p.select_one('[data-click-id="body"]')['href']
-                    results[t][url] = {"title": title}
-
-                else:
-                    url = p.select_one('[data-testid="outbound-link"]')['href']
-                    results[t][url] = {"title": title}
-
+                    
+                results[t][url] = {"title": title}
                 results[t][url]["comment_count"] = p.select_one('[data-click-id="comments"] span').text
                 results[t][url]["comments"] = p.select_one('[data-test-id="comments-page-link-num-comments"]')['href']
 
