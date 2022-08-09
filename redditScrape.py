@@ -58,6 +58,7 @@ def reddit_search(subreddit, targets):
         for t in targets:
             if t.lower() in title.lower():
                 url = p.select_one('[data-testid="outbound-link"]')['href']
+
                 if url is None:
                     url = "https://reddit.com" + p.select_one('[data-click-id="body"]')['href']
 
@@ -65,14 +66,21 @@ def reddit_search(subreddit, targets):
                 results[t][url]["url"] = url
                 count = p.select_one('[data-click-id="comments"] span').text
                 c_power = count.split()[0]
+
                 if 'k' in c_power:
-                    c_power = 3
+                    c_power = 3.0
                 elif 'm' in c_power:
-                    c_power = 6
+                    c_power = 6.0
                 else:
-                    c_power = 0
+                    c_power = 0.0
+
                 count = re.sub('[^0-9.]', '', count)
-                results[t][url]["comment_count"] = float(count) * (10 ** c_power)
+
+                if c_power > 0.0:
+                    results[t][url]["comment_count"] = int(float(count) * (10.0 ** c_power))
+                else:
+                    results[t][url]["comment_count"] = int(count)
+
                 results[t][url]["comments"] = p.select_one('[data-test-id="comments-page-link-num-comments"]')['href']
 
                 break
